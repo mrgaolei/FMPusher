@@ -8,6 +8,7 @@ urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'FMPusher.views.home', name='home'),
     # url(r'^FMPusher/', include('FMPusher.foo.urls')),
+    url(r'^device$', 'main.views.device'),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

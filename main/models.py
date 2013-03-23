@@ -17,6 +17,6 @@ class Device(models.Model):
 	pushalert	= models.BooleanField()
 	pushsound	= models.BooleanField()
 	development	= models.BooleanField()
-	status		= models.BooleanField()
+	status		= models.BooleanField(default=True)
 	created		= models.DateTimeField(auto_now_add=True)
 	updated		= models.DateTimeField(auto_now=True)
