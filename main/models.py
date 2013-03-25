@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 class App(models.Model):
-	appname 	= models.CharField(max_length=255)
+	appname 	= models.CharField(max_length=255, unique=True)
 	appkey		= models.CharField(max_length=32)
 	created 	= models.DateTimeField(auto_now_add=True)
 
@@ -20,3 +20,6 @@ class Device(models.Model):
 	status		= models.BooleanField(default=True)
 	created		= models.DateTimeField(auto_now_add=True)
 	updated		= models.DateTimeField(auto_now=True)
+
+	class Meta:
+		unique_together = ("app", "devtoken")
