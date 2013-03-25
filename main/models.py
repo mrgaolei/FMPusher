@@ -6,6 +6,10 @@ class App(models.Model):
 	appkey		= models.CharField(max_length=32)
 	created 	= models.DateTimeField(auto_now_add=True)
 
+	def __unicode__(self):
+		return self.appname
+
+
 class Device(models.Model):
 	app 		= models.ForeignKey(App)
 	appversion	= models.CharField(max_length=25)
