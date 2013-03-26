@@ -3,7 +3,7 @@ from main.models import *
 
 class DeviceAdmin(admin.ModelAdmin):
 	date_hierarchy = 'updated'
-	list_display = ('app', 'appversion', 'devtoken', 'devname', 'devmodel', 'devversion', 'pushbadge', 'pushalert', 'pushsound', 'development', 'status', 'created', 'updated')
+	list_display = ('app', 'appversion', 'devname', 'devmodel', 'devversion', 'pushbadge', 'pushalert', 'pushsound', 'development', 'status', 'created', 'updated')
 	list_filter = [ 'app', 'devmodel', 'development']
 	search_fields = ['devname']
 
