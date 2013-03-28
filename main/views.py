@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.shortcuts import render
 from main.forms import DeviceForm
-from main.models import App
+from main.models import *
 
 @csrf_exempt
 def device(request):
@@ -14,7 +14,10 @@ def device(request):
 		reload(sys)
 		sys.setdefaultencoding('utf-8')
 		if request.POST.__contains__("appname"):
-			request.POST["app"] = App.objects.get(appname=request.POST["appname"]).pk
+			app = App.objects.get(appname=request.POST["appname"])
+			request.POST["app"] = app.pk
+		else:
+			app = App.objects.get(pk=request.POST["app"])
 		if request.POST.__contains__("devicetoken"):
 			request.POST["devtoken"] = request.POST["devicetoken"]
 		if request.POST.__contains__("devicename"):
@@ -45,7 +48,11 @@ def device(request):
 				request.POST["development"] = 0
 		if not request.POST.__contains__("status"):
 			request.POST["status"] = 1
-		f = DeviceForm(request.POST)
+		try:
+			existsDev = Device.objects.get(app=app,devtoken=request.POST["devtoken"])
+			f = DeviceForm(request.POST, instance=existsDev)
+		except Device.DoesNotExist:
+			f = DeviceForm(request.POST)
 		device = f.save(commit=False)
 		sign = request.POST['sign']
 		poststr = md5.new(device.app.appname + device.app.appkey + device.appversion + device.devtoken + device.devname + device.devmodel + device.devversion).hexdigest()
@@ -53,7 +60,6 @@ def device(request):
 			f.save()
 			return HttpResponse("success")
 		else:
-			return HttpResponse(sign)
 			raise Http404
 	else:
 		f = DeviceForm()
