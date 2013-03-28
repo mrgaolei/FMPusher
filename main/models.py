@@ -30,4 +30,5 @@ class Device(models.Model):
 		return self.devname
 
 	class Meta:
+		ordering = ['-updated']
 		unique_together = ("app", "devtoken")
