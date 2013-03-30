@@ -53,7 +53,7 @@ def device(request):
 			existsDev = Device.objects.get(app=app,devtoken=formdata["devtoken"])
 			f = DeviceForm(formdata, instance=existsDev)
 		except Device.DoesNotExist:
-			f = DeviceForm(request.POST)
+			f = DeviceForm(formdata)
 		device = f.save(commit=False)
 		sign = request.POST['sign']
 		poststr = md5.new(device.app.appname + device.app.appkey + device.appversion + device.devtoken + device.devname + device.devmodel + device.devversion).hexdigest()
