@@ -13,44 +13,45 @@ def device(request):
 	if  request.method == 'POST':
 		reload(sys)
 		sys.setdefaultencoding('utf-8')
+		formdata = request.POST.copy()
 		if request.POST.__contains__("appname"):
 			app = App.objects.get(appname=request.POST["appname"])
-			request.POST["app"] = app.pk
+			formdata["app"] = app.pk
 		else:
 			app = App.objects.get(pk=request.POST["app"])
 		if request.POST.__contains__("devicetoken"):
-			request.POST["devtoken"] = request.POST["devicetoken"]
+			formdata["devtoken"] = request.POST["devicetoken"]
 		if request.POST.__contains__("devicename"):
-			request.POST["devname"] = request.POST["devicename"]
+			formdata["devname"] = request.POST["devicename"]
 		if request.POST.__contains__("devicemodel"):
-			request.POST["devmodel"] = request.POST["devicemodel"]
+			formdata["devmodel"] = request.POST["devicemodel"]
 		if request.POST.__contains__("deviceversion"):
-			request.POST["devversion"] = request.POST["deviceversion"]
+			formdata["devversion"] = request.POST["deviceversion"]
 		if request.POST.__contains__("pushbadge"):
 			if request.POST["pushbadge"] == "enabled":
-				request.POST["pushbadge"] = 1
+				formdata["pushbadge"] = 1
 			else:
-				request.POST["pushbadge"] = 0
+				formdata["pushbadge"] = 0
 		if request.POST.__contains__("pushalert"):
 			if request.POST["pushalert"] == "enabled":
-				request.POST["pushalert"] = 1
+				formdata["pushalert"] = 1
 			else:
-				request.POST["pushalert"] = 0
+				formdata["pushalert"] = 0
 		if request.POST.__contains__("pushsound"):
 			if request.POST["pushsound"] == "enabled":
-				request.POST["pushsound"] = 1
+				formdata["pushsound"] = 1
 			else:
-				request.POST["pushsound"] = 0
+				formdata["pushsound"] = 0
 		if request.POST.__contains__("development"):
 			if request.POST["development"] == "sandbox":
-				request.POST["development"] = 1
+				formdata["development"] = 1
 			else:
-				request.POST["development"] = 0
+				formdata["development"] = 0
 		if not request.POST.__contains__("status"):
-			request.POST["status"] = 1
+			formdata["status"] = 1
 		try:
 			existsDev = Device.objects.get(app=app,devtoken=request.POST["devtoken"])
-			f = DeviceForm(request.POST, instance=existsDev)
+			f = DeviceForm(formdata, instance=existsDev)
 		except Device.DoesNotExist:
 			f = DeviceForm(request.POST)
 		device = f.save(commit=False)
