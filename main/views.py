@@ -50,7 +50,7 @@ def device(request):
 		if not request.POST.__contains__("status"):
 			formdata["status"] = 1
 		try:
-			existsDev = Device.objects.get(app=app,devtoken=request.POST["devtoken"])
+			existsDev = Device.objects.get(app=app,devtoken=formdata["devtoken"])
 			f = DeviceForm(formdata, instance=existsDev)
 		except Device.DoesNotExist:
 			f = DeviceForm(request.POST)
