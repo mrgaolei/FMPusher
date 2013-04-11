@@ -14,7 +14,7 @@ class PmsgAdmin(admin.ModelAdmin):
 	exclude = ['device', 'sent']
 
 	def save_model(self, request, obj, form, change):
-		devices = obj.app.device_set
+		devices = obj.app.device_set.all()
 		for device in devices:
 			msg = Pmsg()
 			msg.app = obj.app
