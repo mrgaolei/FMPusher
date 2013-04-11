@@ -23,7 +23,7 @@ class PmsgAdmin(admin.ModelAdmin):
 				pem = msg.app.cert_dev
 			else:
 				pem = msg.app.cert_dist
-			wrapper = APNSNotificationWrapper(pem, msg.device.development)
+			wrapper = APNSNotificationWrapper("/home/mrgaolei/" % pem, msg.device.development)
 			message = APNSNotification()
 			message.token(binascii.unhexlify(msg.device.devtoken))
 			message.alert(msg.alert)
