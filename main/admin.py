@@ -11,6 +11,7 @@ class DeviceAdmin(admin.ModelAdmin):
 class PmsgAdmin(admin.ModelAdmin):
 	date_hierarchy = 'created'
 	list_display = ('app', 'device', 'badge', 'alert', 'sound', 'sent', 'created')
+	list_filter = ['sent']
 	search_fields = ['alert']
 	exclude = ['device', 'sent']
 	actions = ['make_push']
