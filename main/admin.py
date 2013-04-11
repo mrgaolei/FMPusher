@@ -16,7 +16,7 @@ class PmsgAdmin(admin.ModelAdmin):
 	actions = ['make_push']
 
 	def make_push(self, request, queryset):
-		from APSNWrapper import *
+		from APNSWrapper import *
 		import binascii
 		for msg in queryset:
 			if msg.device.development:
