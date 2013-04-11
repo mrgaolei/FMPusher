@@ -39,15 +39,18 @@ class PmsgAdmin(admin.ModelAdmin):
 	make_push.short_description = "发推送"
 
 	def save_model(self, request, obj, form, change):
-		devices = obj.app.device_set.all()
-		for device in devices:
-			msg = Pmsg()
-			msg.app = obj.app
-			msg.device = device
-			msg.badge = obj.badge
-			msg.alert = obj.alert
-			msg.sound = obj.sound
-			msg.save()
+		if change:
+			obj.save()
+		else:
+			devices = obj.app.device_set.all()
+			for device in devices:
+				msg = Pmsg()
+				msg.app = obj.app
+				msg.device = device
+				msg.badge = obj.badge
+				msg.alert = obj.alert
+				msg.sound = obj.sound
+				msg.save()
 
 class AppAdmin(admin.ModelAdmin):
 	list_display = ('appname', 'cert_dev', 'cert_dist', 'created')
