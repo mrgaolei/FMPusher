@@ -13,6 +13,27 @@ class PmsgAdmin(admin.ModelAdmin):
 	search_fields = ['alert']
 	exclude = ['device', 'sent']
 
+	def make_push(self, request, queryset):
+		from APSNWrapper import *
+		import binascii
+		for msg in queryset:
+			if msg.device.development:
+				pem = msg.app.cert_dev
+			else:
+				pem = msg.app.cert_dist
+			wrapper = APNSNotificationWrapper(pem, msg.device.development)
+			message = APNSNotification()
+			message.token(binascii.unhexlify(msg.device.devtoken))
+			message.alert(msg.alert)
+			message.badge(msg.badge)
+			message.sound(msg.sound)
+			wrapper.append(message)
+			if wrapper.notify():
+				msg.sent = True
+				msg.save()
+
+	make_push.short_description = "发推送"
+
 	def save_model(self, request, obj, form, change):
 		devices = obj.app.device_set.all()
 		for device in devices:
@@ -24,7 +45,9 @@ class PmsgAdmin(admin.ModelAdmin):
 			msg.sound = obj.sound
 			msg.save()
 
+class AppAdmin(admin.ModelAdmin):
+	list_display = ('appname', 'cert_dev', 'cert_dist', 'created')
 
-admin.site.register(App)
+admin.site.register(App, AppAdmin)
 admin.site.register(Device, DeviceAdmin)
 admin.site.register(Pmsg, PmsgAdmin)

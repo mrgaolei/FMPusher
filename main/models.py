@@ -5,6 +5,8 @@ from django.db import models
 class App(models.Model):
 	appname 	= models.CharField(max_length=255, unique=True)
 	appkey		= models.CharField(max_length=32)
+	cert_dev	= models.CharField(max_length=50)
+	cert_dist	= models.CharField(max_length=50)
 	created 	= models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
