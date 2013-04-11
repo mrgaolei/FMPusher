@@ -38,7 +38,7 @@ class Device(models.Model):
 class Pmsg(models.Model):
 	app			= models.ForeignKey(App)
 	device		= models.ForeignKey(Device)
-	badge		= models.CharField("角标", max_length = 3, default = "1", blank = True)
+	badge		= models.IntegerField("角标", default = 1)
 	alert		= models.CharField("信息", max_length = 200, blank = True)
 	sound		= models.CharField("声音", max_length = 50, default = "default", blank = True)
 	sent		= models.BooleanField("已发送", default = False)
