@@ -13,6 +13,7 @@ class PmsgAdmin(admin.ModelAdmin):
 	list_display = ('app', 'device', 'badge', 'alert', 'sound', 'sent', 'created')
 	search_fields = ['alert']
 	exclude = ['device', 'sent']
+	actions = ['make_push']
 
 	def make_push(self, request, queryset):
 		from APSNWrapper import *
