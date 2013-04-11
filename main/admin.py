@@ -19,6 +19,8 @@ class PmsgAdmin(admin.ModelAdmin):
 		from APNSWrapper import *
 		import binascii
 		for msg in queryset:
+			if msg.sent:
+				continue
 			if msg.device.development:
 				pem = msg.app.cert_dev
 			else:
