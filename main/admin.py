@@ -11,7 +11,19 @@ class PmsgAdmin(admin.ModelAdmin):
 	date_hierarchy = 'created'
 	list_display = ('app', 'device', 'badge', 'alert', 'sound', 'sent', 'created')
 	search_fields = ['alert']
-	exclude = ['device']
+	exclude = ['device', 'sent']
+
+	def save_model(self, request, obj, form, change):
+		devices = obj.app.device_set
+		for device in devices:
+			msg = Pmsg()
+			msg.app = obj.app
+			msg.device = device
+			msg.badge = obj.badge
+			msg.alert = obj.alert
+			msg.sound = obj.sound
+			msg.save()
+
 
 admin.site.register(App)
 admin.site.register(Device, DeviceAdmin)
