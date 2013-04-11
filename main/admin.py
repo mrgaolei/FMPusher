@@ -9,8 +9,9 @@ class DeviceAdmin(admin.ModelAdmin):
 
 class PmsgAdmin(admin.ModelAdmin):
 	date_hierarchy = 'created'
-	list_display = ('device', 'badge', 'alert', 'sound', 'sent', 'created')
+	list_display = ('app', 'device', 'badge', 'alert', 'sound', 'sent', 'created')
 	search_fields = ['alert']
+	exclude = ['device']
 
 admin.site.register(App)
 admin.site.register(Device, DeviceAdmin)

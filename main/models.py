@@ -34,6 +34,7 @@ class Device(models.Model):
 		unique_together = ("app", "devtoken")
 
 class Pmsg(models.Model):
+	app			= models.ForeignKey(App)
 	device		= models.ForeignKey(Device)
 	badge		= models.CharField("角标", max_length = 3, default = "1", blank = True)
 	alert		= models.CharField("信息", max_length = 200, blank = True)
