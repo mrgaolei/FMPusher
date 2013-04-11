@@ -7,5 +7,11 @@ class DeviceAdmin(admin.ModelAdmin):
 	list_filter = [ 'app', 'devmodel', 'development']
 	search_fields = ['devname']
 
+class PmsgAdmin(admin.ModelAdmin):
+	date_hierarchy = 'created'
+	list_display = ('device', 'badge', 'alert', 'sound', 'sent', 'created')
+	search_fields = ['alert']
+
 admin.site.register(App)
 admin.site.register(Device, DeviceAdmin)
+admin.site.register(Pmsg, PmsgAdmin)
