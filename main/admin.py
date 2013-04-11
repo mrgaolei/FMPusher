@@ -27,7 +27,7 @@ class PmsgAdmin(admin.ModelAdmin):
 			message = APNSNotification()
 			message.token(binascii.unhexlify(msg.device.devtoken))
 			message.alert(msg.alert)
-			message.badge(msg.badge)
+			message.badge(int(msg.badge))
 			message.sound(msg.sound)
 			wrapper.append(message)
 			if wrapper.notify():
