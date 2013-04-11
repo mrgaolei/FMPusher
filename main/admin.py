@@ -14,7 +14,4 @@ class PmsgAdmin(admin.ModelAdmin):
 
 admin.site.register(App)
 admin.site.register(Device, DeviceAdmin)
-<<<<<<< HEAD
-=======
 admin.site.register(Pmsg, PmsgAdmin)
->>>>>>> be6ff5294d17d6b912d8ec0223a11d69d29e72b1
