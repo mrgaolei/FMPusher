@@ -28,7 +28,7 @@ class PmsgAdmin(admin.ModelAdmin):
 			wrapper = APNSNotificationWrapper("/home/mrgaolei/%s" % pem, msg.device.development)
 			message = APNSNotification()
 			message.token(binascii.unhexlify(msg.device.devtoken))
-			message.alert(str(msg.alert))
+			message.alert(msg.alert.encode("UTF-8"))
 			message.badge(int(msg.badge))
 			message.sound(msg.sound)
 			wrapper.append(message)
