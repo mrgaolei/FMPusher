@@ -40,8 +40,9 @@ class PmsgAdmin(admin.ModelAdmin):
 			#if wrapper.notify():
 			msg.sent = True
 			msg.save()
-		for wp in wrapper:
-			wp.notify()
+		keys = wrapper.keys()
+		for key in keys:
+			wrapper[key].notify()
 
 	make_push.short_description = "发推送"
 
