@@ -19,6 +19,7 @@ class PmsgAdmin(admin.ModelAdmin):
 	def make_push(self, request, queryset):
 		from APNSWrapper import *
 		import binascii
+		wrapper = {}
 		for msg in queryset:
 			if msg.sent:
 				continue
@@ -26,16 +27,21 @@ class PmsgAdmin(admin.ModelAdmin):
 				pem = msg.app.cert_dev
 			else:
 				pem = msg.app.cert_dist
-			wrapper = APNSNotificationWrapper("/home/mrgaolei/%s" % pem, msg.device.development)
+			key = "%d_%d" % (msg.app.pk, msg.device.development)
+			if not wrapper.has_key(key):
+				wrapper[key] = APNSNotificationWrapper("/home/mrgaolei/%s" % pem, msg.device.development)
+			#wrapper = APNSNotificationWrapper("/home/mrgaolei/%s" % pem, msg.device.development)
 			message = APNSNotification()
 			message.token(binascii.unhexlify(msg.device.devtoken))
 			message.alert(msg.alert.encode("UTF-8"))
 			message.badge(int(msg.badge))
 			message.sound(msg.sound)
-			wrapper.append(message)
-			if wrapper.notify():
-				msg.sent = True
-				msg.save()
+			wrapper[key].append(message)
+			#if wrapper.notify():
+			msg.sent = True
+			msg.save()
+		for wp in wrapper:
+			wp.notify()
 
 	make_push.short_description = "发推送"
 
