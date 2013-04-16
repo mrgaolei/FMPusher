@@ -46,3 +46,8 @@ class Pmsg(models.Model):
 
 	def __unicode__(self):
 		return "msg %s send to %s" % (self.alert, self.device.devname)
+
+class Tscount(models.Model):
+	url = models.URLField('网址', unique = True)
+	num = models.IntegerField('访问数量', default = 1)
+	updated = models.DateTimeField('最后更新', auto_now = True)

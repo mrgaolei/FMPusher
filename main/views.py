@@ -65,3 +65,14 @@ def device(request):
 	else:
 		f = DeviceForm()
 		return render(request, 'main/device.html', {'form': f})
+
+
+def tscount(request, url):
+	try:
+		tc = Tscount.objects.get(url=url)
+		tc.num += 1
+	except Exception as e:
+		tc = Tscount()
+		tc.url = url
+	tc.save()
+	return redirect(url)
