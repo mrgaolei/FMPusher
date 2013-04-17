@@ -2,6 +2,7 @@
 
 import md5, sys
 from django.http import Http404
+from django.shortcuts import render_to_response, get_list_or_404, get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -67,7 +68,9 @@ def device(request):
 		return render(request, 'main/device.html', {'form': f})
 
 
-def tscount(request, url):
+def clkcount(request, url):
+	if not url[0:4] == 'http':
+		url = 'http://' + url
 	try:
 		tc = Tscount.objects.get(url=url)
 		tc.num += 1
