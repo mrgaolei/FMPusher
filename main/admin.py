@@ -66,3 +66,4 @@ class AppAdmin(admin.ModelAdmin):
 admin.site.register(App, AppAdmin)
 admin.site.register(Device, DeviceAdmin)
 admin.site.register(Pmsg, PmsgAdmin)
+admin.site.register(Tscount)
