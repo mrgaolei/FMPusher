@@ -66,4 +66,10 @@ class AppAdmin(admin.ModelAdmin):
 admin.site.register(App, AppAdmin)
 admin.site.register(Device, DeviceAdmin)
 admin.site.register(Pmsg, PmsgAdmin)
-admin.site.register(Tscount)
+
+class TscountAdmin(admin.ModelAdmin):
+	date_hierarchy = 'updated'
+	list_display = ('url', 'num', 'updated')
+	search_fields = ['url']
+
+admin.site.register(Tscount, TscountAdmin)
