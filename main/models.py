@@ -45,7 +45,19 @@ class Pmsg(models.Model):
 	created		= models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
+		return self.alert
 		return "msg %s send to %s" % (self.alert, self.device.devname)
+
+class Property(models.Model):
+	pmsg		= models.ForeignKey(Pmsg)
+	argkey		= models.CharField("key", max_length = 40)
+	argvalue	= models.CharField("value", max_length = 200)
+
+	def __unicode__(self):
+		return  self.argkey
+
+	class Meta:
+		unique_together = ("pmsg", "argkey")
 
 class Tscount(models.Model):
 	url = models.URLField('网址', unique = True)

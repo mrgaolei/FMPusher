@@ -8,16 +8,21 @@ class DeviceAdmin(admin.ModelAdmin):
 	list_filter = [ 'app', 'devmodel', 'development']
 	search_fields = ['devname']
 
+class PropertyInline(admin.TabularInline):
+	model = Property
+	extra = 1
+
 class PmsgAdmin(admin.ModelAdmin):
 	date_hierarchy = 'created'
 	list_display = ('app', 'device', 'badge', 'alert', 'sound', 'sent', 'created')
 	list_filter = ['sent']
 	search_fields = ['alert']
 	exclude = ['device', 'sent']
+	inlines = [PropertyInline]
 	actions = ['make_push']
 
 	def make_push(self, request, queryset):
-		from APNSWrapper import *
+		from APNSWrapper import APNSNotificationWrapper, APNSNotification, APNSProperty
 		import binascii
 		wrapper = {}
 		for msg in queryset:
@@ -36,6 +41,11 @@ class PmsgAdmin(admin.ModelAdmin):
 			message.alert(msg.alert.encode("UTF-8"))
 			message.badge(int(msg.badge))
 			message.sound(msg.sound)
+
+			# property
+			for ppt in msg.property_set.all():
+				message.appendProperty(APNSProperty(str(ppt.argkey), str(ppt.argvalue)))
+
 			wrapper[key].append(message)
 			#if wrapper.notify():
 			msg.sent = True
@@ -45,6 +55,25 @@ class PmsgAdmin(admin.ModelAdmin):
 			wrapper[key].notify()
 
 	make_push.short_description = "发推送"
+
+	def save_formset(self, request, form, formset, change):
+		if change:
+			super(PmsgAdmin, self).save_formset(request, form, formset, change)
+		else:
+			msgs = Pmsg.objects.filter(app_id=form['app'].value(), alert=form['alert'].value())
+			instances = formset.save(commit=False)
+			argkey = None
+			argvalue = None
+			for instance in instances:
+				argkey = instance.argkey
+				argvalue = instance.argvalue
+			for msg in msgs:
+				propt = Property()
+				propt.pmsg = msg
+				propt.argkey = argkey
+				propt.argvalue = argvalue
+				propt.save()
+			return
 
 	def save_model(self, request, obj, form, change):
 		if change:
