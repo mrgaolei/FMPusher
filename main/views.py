@@ -79,3 +79,12 @@ def clkcount(request, url):
 		tc.url = url
 	tc.save()
 	return redirect(url)
+
+def clkcountpk(request, pk):
+	try:
+		tc = Tscount.objects.get(pk=pk)
+		tc.num += 1
+	except Exception as e:
+		pass
+	tc.save()
+	return redirect(tc.url)
