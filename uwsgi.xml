@@ -1,0 +1,5 @@
+<uwsgi>
+	<socket>/tmp/fmpusher.sock</socket>
+	<master/>
+	<module>FMPusher.wsgi:application</module>
+</uwsgi>
