@@ -15,7 +15,7 @@ class PropertyInline(admin.TabularInline):
 class PmsgAdmin(admin.ModelAdmin):
 	date_hierarchy = 'created'
 	list_display = ('app', 'device', 'badge', 'alert', 'sound', 'sent', 'created')
-	list_filter = ['sent']
+	list_filter = ['sent', 'app']
 	search_fields = ['alert']
 	exclude = ['device', 'sent']
 	inlines = [PropertyInline]
@@ -44,7 +44,8 @@ class PmsgAdmin(admin.ModelAdmin):
 
 			# property
 			for ppt in msg.property_set.all():
-				message.appendProperty(APNSProperty(str(ppt.argkey), str(ppt.argvalue)))
+				#message.appendProperty(APNSProperty(str(ppt.argkey), str(ppt.argvalue)))
+				message.appendProperty(APNSProperty(ppt.argkey.encode( "UTF-8" ), ppt.argvalue.encode( "UTF-8" )))
 
 			wrapper[key].append(message)
 			#if wrapper.notify():
@@ -67,12 +68,12 @@ class PmsgAdmin(admin.ModelAdmin):
 			for instance in instances:
 				argkey = instance.argkey
 				argvalue = instance.argvalue
-			for msg in msgs:
-				propt = Property()
-				propt.pmsg = msg
-				propt.argkey = argkey
-				propt.argvalue = argvalue
-				propt.save()
+				for msg in msgs:
+					propt = Property()
+					propt.pmsg = msg
+					propt.argkey = argkey
+					propt.argvalue = argvalue
+					propt.save()
 			return
 
 	def save_model(self, request, obj, form, change):
