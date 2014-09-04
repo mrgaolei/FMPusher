@@ -43,6 +43,7 @@ class Pmsg(models.Model):
 	sound		= models.CharField("声音", max_length = 50, default = "default", blank = True)
 	sent		= models.BooleanField("已发送", default = False)
 	created		= models.DateTimeField(auto_now_add=True)
+	category	= models.CharField("类别", max_length = 50, blank = True, help_text = "iOS 8 专用")
 
 	def __unicode__(self):
 		return self.alert
