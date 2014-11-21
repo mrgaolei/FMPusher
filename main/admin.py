@@ -22,9 +22,10 @@ class PmsgAdmin(admin.ModelAdmin):
 	actions = ['make_push']
 
 	def make_push(self, request, queryset):
-		from APNSWrapper import APNSNotificationWrapper, APNSNotification, APNSProperty
-		import binascii
+		from apns import APNs, Frame, Payload
+		import time
 		wrapper = {}
+		frames = {}
 		for msg in queryset:
 			if msg.sent:
 				continue
@@ -34,26 +35,24 @@ class PmsgAdmin(admin.ModelAdmin):
 				pem = msg.app.cert_dist
 			key = "%d_%d" % (msg.app.pk, msg.device.development)
 			if not wrapper.has_key(key):
-				wrapper[key] = APNSNotificationWrapper("/home/mrgaolei/%s" % pem, msg.device.development)
+				wrapper[key] = APNs(cert_file="/home/mrgaolei/%s" % pem, use_sandbox=msg.device.development)
+				frames[key] = Frame()
 			#wrapper = APNSNotificationWrapper("/home/mrgaolei/%s" % pem, msg.device.development)
-			message = APNSNotification()
-			message.token(binascii.unhexlify(msg.device.devtoken))
-			message.alert(msg.alert.encode("UTF-8"))
-			message.badge(int(msg.badge))
-			message.sound(msg.sound)
-
+			payload = Payload(alert = msg.alert.encode("UTF-8"), sound = msg.sound, badge = int(msg.badge))
+			frames[key].add_item(msg.device.devtoken, payload, msg.pk, time.time()+3600, 10)
+			
 			# property
-			for ppt in msg.property_set.all():
+			# for ppt in msg.property_set.all():
 				#message.appendProperty(APNSProperty(str(ppt.argkey), str(ppt.argvalue)))
-				message.appendProperty(APNSProperty(ppt.argkey.encode( "UTF-8" ), ppt.argvalue.encode( "UTF-8" )))
+				#message.appendProperty(APNSProperty(ppt.argkey.encode( "UTF-8" ), ppt.argvalue.encode( "UTF-8" )))
 
-			wrapper[key].append(message)
+			#wrapper[key].append(message)
 			#if wrapper.notify():
 			msg.sent = True
 			msg.save()
 		keys = wrapper.keys()
 		for key in keys:
-			wrapper[key].notify()
+			wrapper[key].gateway_server.send_notification_multiple(frames[key])
 
 	make_push.short_description = "发推送"
 
