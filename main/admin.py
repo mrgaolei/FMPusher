@@ -16,7 +16,7 @@ class PmsgAdmin(admin.ModelAdmin):
 	date_hierarchy = 'created'
 	list_display = ('app', 'device', 'badge', 'alert', 'sound', 'sent', 'created')
 	list_filter = ['sent', 'app']
-	search_fields = ['alert']
+	search_fields = ['alert', 'device__devname']
 	exclude = ['device', 'sent']
 	inlines = [PropertyInline]
 	actions = ['make_push']
@@ -34,7 +34,7 @@ class PmsgAdmin(admin.ModelAdmin):
 				pem = msg.app.cert_dist
 			key = "%d_%d" % (msg.app.pk, msg.device.development)
 			if not wrapper.has_key(key):
-				wrapper[key] = APNSNotificationWrapper("/home/mrgaolei/%s" % pem, msg.device.development)
+				wrapper[key] = APNSNotificationWrapper("/Users/mrgaolei/%s" % pem, msg.device.development)
 			#wrapper = APNSNotificationWrapper("/home/mrgaolei/%s" % pem, msg.device.development)
 			message = APNSNotification()
 			message.token(binascii.unhexlify(msg.device.devtoken))
