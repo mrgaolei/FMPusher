@@ -34,7 +34,7 @@ class PmsgAdmin(admin.ModelAdmin):
 				pem = msg.app.cert_dist
 			key = "%d_%d" % (msg.app.pk, msg.device.development)
 			if not wrapper.has_key(key):
-				wrapper[key] = APNSNotificationWrapper("/Users/mrgaolei/%s" % pem, msg.device.development)
+				wrapper[key] = APNSNotificationWrapper("/home/mrgaolei/%s" % pem, msg.device.development)
 			#wrapper = APNSNotificationWrapper("/home/mrgaolei/%s" % pem, msg.device.development)
 			message = APNSNotification()
 			message.token(binascii.unhexlify(msg.device.devtoken))
