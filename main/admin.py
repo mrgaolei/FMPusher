@@ -38,7 +38,7 @@ class PmsgAdmin(admin.ModelAdmin):
 				wrapper[key] = APNs(cert_file="/home/mrgaolei/%s" % pem, use_sandbox=msg.device.development)
 				frames[key] = Frame()
 			#wrapper = APNSNotificationWrapper("/home/mrgaolei/%s" % pem, msg.device.development)
-			payload = Payload(alert = msg.alert.encode("UTF-8"), sound = msg.sound, badge = int(msg.badge))
+			payload = Payload(alert = msg.alert, sound = msg.sound, badge = int(msg.badge))
 			frames[key].add_item(msg.device.devtoken, payload, msg.pk, time.time()+3600, 10)
 			
 			# property
