@@ -79,7 +79,7 @@ class PmsgAdmin(admin.ModelAdmin):
 		if change:
 			obj.save()
 		else:
-			devices = obj.app.device_set.filter(pushalert = True)
+			devices = obj.app.device_set.all()
 			for device in devices:
 				msg = Pmsg()
 				msg.app = obj.app
