@@ -8,6 +8,7 @@ urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'FMPusher.views.home', name='home'),
     # url(r'^FMPusher/', include('FMPusher.foo.urls')),
+    url(r'^$', 'main.views.home'),
     url(r'^device$', 'main.views.device'),
     url(r'^clkcount/(?P<pk>\d+)$', 'main.views.clkcountpk'),
     url(r'^clkcount/(?P<url>.+)$', 'main.views.clkcount'),

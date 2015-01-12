@@ -9,6 +9,9 @@ from django.shortcuts import render
 from main.forms import DeviceForm
 from main.models import *
 
+def home(request):
+	return redirect('/admin/')
+
 @csrf_exempt
 def device(request):
 	if  request.method == 'POST':
