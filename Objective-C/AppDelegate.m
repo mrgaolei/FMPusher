@@ -2,8 +2,8 @@
 //  AppDelegate.m
 //  FMPusher
 //
-//  Created by 高磊 on 13-1-13.
-//  Copyright (c) 2013年 高磊. All rights reserved.
+//  Created by mrgaolei on 13-1-13.
+//  Copyright (c) 2013~2015年 mrgaolei. All rights reserved.
 //
 
 #import "AppDelegate.h"
@@ -18,16 +18,29 @@
     if (!TARGET_IPHONE_SIMULATOR) {
         NSMutableDictionary *deviceInfo =[[NSMutableDictionary alloc]initWithCapacity:0];
         // Get Bundle Info for Remote Registration (handy if you have more than one app)
-        NSString *appName = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleDisplayName"];
+        NSString *appName = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"];
         NSString *appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
         
-        // Check what Notifications the user has turned on.  We registered for all three, but they may have manually disabled some or all of them.
-        NSUInteger rntypes = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
-        
-        // Set the defaults to disabled unless we find otherwise...
-        NSString *pushBadge = (rntypes & UIRemoteNotificationTypeBadge) ? @"enabled" : @"disabled";
-        NSString *pushAlert = (rntypes & UIRemoteNotificationTypeAlert) ? @"enabled" : @"disabled";
-        NSString *pushSound = (rntypes & UIRemoteNotificationTypeSound) ? @"enabled" : @"disabled";
+        NSString *pushBadge;
+        NSString *pushAlert;
+        NSString *pushSound;
+
+        if ([[[UIDevice currentDevice] systemVersion] hasPrefix:@"8"]) {
+            UIUserNotificationSettings *notifiSettings = [UIApplication sharedApplication].currentUserNotificationSettings;
+            NSUInteger rntypes = notifiSettings.types;
+            
+            pushBadge = (rntypes & UIUserNotificationTypeBadge) ? @"enabled" : @"disabled";
+            pushAlert = (rntypes & UIUserNotificationTypeAlert) ? @"enabled" : @"disabled";
+            pushSound = (rntypes & UIUserNotificationTypeSound) ? @"enabled" : @"disabled";
+        } else {
+            // Check what Notifications the user has turned on.  We registered for all three, but they may have manually disabled some or all of them.
+            NSUInteger rntypes = [[UIApplication sharedApplication] enabledRemoteNotificationTypes];
+            
+            // Set the defaults to disabled unless we find otherwise...
+            pushBadge = (rntypes & UIRemoteNotificationTypeBadge) ? @"enabled" : @"disabled";
+            pushAlert = (rntypes & UIRemoteNotificationTypeAlert) ? @"enabled" : @"disabled";
+            pushSound = (rntypes & UIRemoteNotificationTypeSound) ? @"enabled" : @"disabled";
+        }
         
         // Get the users Device Model, Display Name, Unique ID, Token & Version Number
         UIDevice *dev = [UIDevice currentDevice];
@@ -59,14 +72,20 @@
         NSString *poststr = [NSString stringWithFormat:@"%@%@%@%@%@%@%@", [deviceInfo objectForKey:@"appname"], FMPushKEY, [deviceInfo objectForKey:@"appversion"], [deviceInfo objectForKey:@"devicetoken"], [deviceInfo objectForKey:@"devicename"], [deviceInfo objectForKey:@"devicemodel"], [deviceInfo objectForKey:@"deviceversion"]];
         [deviceInfo setValue:poststr.md5 forKey:@"sign"];
 #ifdef FMPushURL
-        TTURLRequest *request = [TTURLRequest requestWithURL:FMPushURL delegate:self];
-        request.cachePolicy = TTURLRequestCachePolicyNone;
-        request.response = [[TTURLDataResponse alloc] init];
-        request.httpMethod = @"POST";
-        [request.parameters setDictionary:deviceInfo];
-        [request send];
+        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+        manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
+        [manager POST:FMPushURL parameters:deviceInfo success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            NSLog(@"success:%@", responseObject);
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"failure:%@, %@", error.localizedDescription, operation.responseString);
+        }];
 #endif
     }
+}
+
+- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
+{
+    NSLog(@"didRegister");
 }
 
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
@@ -74,18 +93,9 @@
     NSLog(@"FailToRegisterForRemoteNotifications: %@", error.localizedDescription);
 }
 
-#pragma mark - TTURL
-
-- (void)requestDidFinishLoad:(TTURLRequest*)request
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo NS_AVAILABLE_IOS(3_0)
 {
-    TTURLDataResponse *response = request.response;
-    NSString *result = [[NSString alloc] initWithData:response.data encoding:4];
-    NSLog(@"register result: %@", result);
-}
-
-- (void)request:(TTURLRequest*)request didFailLoadWithError:(NSError*)error
-{
-    NSLog(@"register fail: %@", error.localizedDescription);
+    NSLog(@"ui:%@", userInfo);
 }
 
 @end
