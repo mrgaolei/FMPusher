@@ -25,6 +25,10 @@ def device(request):
 			app = App.objects.get(pk=request.POST["app"])
 		if request.POST.__contains__("devicetoken"):
 			formdata["devtoken"] = request.POST["devicetoken"]
+		if request.POST.__contains__("locale"):
+			formdata["locale"] = request.POST["locale"]
+		else:
+			formdata["locale"] = "unknow"
 		if request.POST.__contains__("devicename"):
 			formdata["devname"] = request.POST["devicename"]
 		if request.POST.__contains__("devicemodel"):

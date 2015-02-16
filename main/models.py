@@ -27,6 +27,7 @@ class Device(models.Model):
 	status		= models.BooleanField(default=True)
 	created		= models.DateTimeField(auto_now_add=True)
 	updated		= models.DateTimeField(auto_now=True)
+	locale		= models.CharField("地区", max_length=10, blank=True, default='', db_index = True)
 
 	def __unicode__(self):
 		return self.devname
