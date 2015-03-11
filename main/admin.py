@@ -35,10 +35,10 @@ class PmsgAdmin(admin.ModelAdmin):
 				pem = msg.app.cert_dist
 			key = "%d_%d" % (msg.app.pk, msg.device.development)
 			if not wrapper.has_key(key):
-				wrapper[key] = APNs(cert_file="/home/mrgaolei/%s" % pem, use_sandbox=msg.device.development)
+				wrapper[key] = APNs(cert_file="/Users/mrgaolei/%s" % pem, use_sandbox=msg.device.development)
 				frames[key] = Frame()
 			#wrapper = APNSNotificationWrapper("/home/mrgaolei/%s" % pem, msg.device.development)
-			payload = Payload(alert = msg.alert, sound = msg.sound, badge = int(msg.badge))
+			payload = Payload(alert = msg.alert, sound = msg.sound, badge = int(msg.badge), category = msg.category)
 			frames[key].add_item(msg.device.devtoken, payload, msg.pk, time.time()+3600, 10)
 			
 			# property
