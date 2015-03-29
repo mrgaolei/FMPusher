@@ -44,7 +44,7 @@ class PmsgAdmin(admin.ModelAdmin):
 			for ppt in msg.property_set.all():
 				custom[ppt.argkey] = ppt.argvalue
 
-			payload = Payload(alert = msg.alert, sound = msg.sound, badge = int(msg.badge), custom = custom, category = msg.category)
+			payload = Payload(alert = msg.alert, sound = msg.sound, badge = int(msg.badge), category = msg.category)
 			frames[key].add_item(msg.device.devtoken, payload, msg.pk, time.time()+3600, 10)
 			
 			# property
