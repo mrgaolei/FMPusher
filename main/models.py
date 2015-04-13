@@ -12,6 +12,10 @@ class App(models.Model):
 	def __unicode__(self):
 		return self.appname
 
+	class Meta:
+		verbose_name = "应用APP"
+		verbose_name_plural = verbose_name
+
 
 class Device(models.Model):
 	app 		= models.ForeignKey(App)
@@ -35,6 +39,8 @@ class Device(models.Model):
 	class Meta:
 		ordering = ['-updated']
 		unique_together = ("app", "devtoken")
+		verbose_name = "设备"
+		verbose_name_plural = verbose_name
 
 class Pmsg(models.Model):
 	app			= models.ForeignKey(App)
@@ -49,6 +55,10 @@ class Pmsg(models.Model):
 	def __unicode__(self):
 		return self.alert
 		return "msg %s send to %s" % (self.alert, self.device.devname)
+
+	class Meta:
+		verbose_name = "推送消息"
+		verbose_name_plural = verbose_name
 
 class Property(models.Model):
 	pmsg		= models.ForeignKey(Pmsg)
