@@ -35,7 +35,11 @@ class PmsgAdmin(admin.ModelAdmin):
 				pem = msg.app.cert_dist
 			key = "%d_%d" % (msg.app.pk, msg.device.development)
 			if not wrapper.has_key(key):
+<<<<<<< HEAD
 				wrapper[key] = APNs(cert_file="/var/www/cert/%s" % pem, use_sandbox=msg.device.development)
+=======
+				wrapper[key] = APNs(cert_file="/home/mrgaolei/%s" % pem, use_sandbox=msg.device.development)
+>>>>>>> 39a4633cc30aeb7a92de3c82dd946992707a44ae
 				frames[key] = Frame()
 			#wrapper = APNSNotificationWrapper("/home/mrgaolei/%s" % pem, msg.device.development)
 			custom = {}
@@ -93,6 +97,7 @@ class PmsgAdmin(admin.ModelAdmin):
 				msg.badge = obj.badge
 				msg.alert = obj.alert
 				msg.sound = obj.sound
+				msg.category = obj.category
 				msg.save()
 
 class AppAdmin(admin.ModelAdmin):
