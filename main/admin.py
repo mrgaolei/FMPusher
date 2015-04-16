@@ -35,7 +35,7 @@ class PmsgAdmin(admin.ModelAdmin):
 				pem = msg.app.cert_dist
 			key = "%d_%d" % (msg.app.pk, msg.device.development)
 			if not wrapper.has_key(key):
-				wrapper[key] = APNs(cert_file="/Users/mrgaolei/%s" % pem, use_sandbox=msg.device.development)
+				wrapper[key] = APNs(cert_file="/var/www/cert/%s" % pem, use_sandbox=msg.device.development)
 				frames[key] = Frame()
 			#wrapper = APNSNotificationWrapper("/home/mrgaolei/%s" % pem, msg.device.development)
 			custom = {}
