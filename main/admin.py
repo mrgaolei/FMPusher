@@ -1,6 +1,7 @@
 # coding=UTF-8
 from django.contrib import admin
 from main.models import *
+from main.forms import PmsgForm
 
 class DeviceAdmin(admin.ModelAdmin):
 	date_hierarchy = 'updated'
@@ -18,6 +19,7 @@ class PmsgAdmin(admin.ModelAdmin):
 	list_filter = ['sent', 'app']
 	search_fields = ['alert', 'device__devname']
 	exclude = ['device', 'sent']
+	form = PmsgForm
 	inlines = [PropertyInline]
 	actions = ['make_push']
 
@@ -85,7 +87,10 @@ class PmsgAdmin(admin.ModelAdmin):
 		if change:
 			obj.save()
 		else:
-			devices = obj.app.device_set.all()
+			if form['locale'].value():
+				devices = obj.app.device_set.filter(locale=form['locale'].value())
+			else:
+				devices = obj.app.device_set.all()
 			for device in devices:
 				msg = Pmsg()
 				msg.app = obj.app
