@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
 
-import md5, sys
+import hashlib, sys
 from django.http import Http404
-from django.shortcuts import render_to_response, get_list_or_404, get_object_or_404, redirect
+from django.shortcuts import get_list_or_404, get_object_or_404, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -64,7 +64,7 @@ def device(request):
 			f = DeviceForm(formdata)
 		device = f.save(commit=False)
 		sign = request.POST['sign']
-		poststr = md5.new(device.app.appname + device.app.appkey + device.appversion + device.devtoken + device.devname + device.devmodel + device.devversion).hexdigest()
+		poststr = hashlib.md5().update(device.app.appname + device.app.appkey + device.appversion + device.devtoken + device.devname + device.devmodel + device.devversion).hexdigest()
 		if (sign == poststr):
 			f.save()
 			return HttpResponse("success")

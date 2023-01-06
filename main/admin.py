@@ -1,7 +1,7 @@
-# coding=UTF-8
 from django.contrib import admin
 from main.models import *
 from main.forms import PmsgForm
+
 
 class DeviceAdmin(admin.ModelAdmin):
 	date_hierarchy = 'updated'
@@ -107,10 +107,3 @@ class AppAdmin(admin.ModelAdmin):
 admin.site.register(App, AppAdmin)
 admin.site.register(Device, DeviceAdmin)
 admin.site.register(Pmsg, PmsgAdmin)
-
-class TscountAdmin(admin.ModelAdmin):
-	date_hierarchy = 'updated'
-	list_display = ('url', 'num', 'updated')
-	search_fields = ['url']
-
-admin.site.register(Tscount, TscountAdmin)

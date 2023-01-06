@@ -18,7 +18,7 @@ class App(models.Model):
 
 
 class Device(models.Model):
-	app 		= models.ForeignKey(App)
+	app 		= models.ForeignKey(App, on_delete=models.PROTECT)
 	appversion	= models.CharField("APP版本", max_length=25)
 	devtoken	= models.CharField(max_length=64)
 	devname		= models.CharField(max_length=255)
@@ -43,8 +43,8 @@ class Device(models.Model):
 		verbose_name_plural = verbose_name
 
 class Pmsg(models.Model):
-	app			= models.ForeignKey(App)
-	device		= models.ForeignKey(Device)
+	app			= models.ForeignKey(App, on_delete=models.PROTECT)
+	device		= models.ForeignKey(Device, on_delete=models.PROTECT)
 	badge		= models.IntegerField("角标", default = 1)
 	alert		= models.CharField("信息", max_length = 200, blank = True)
 	sound		= models.CharField("声音", max_length = 50, default = "default", blank = True)
@@ -61,7 +61,7 @@ class Pmsg(models.Model):
 		verbose_name_plural = verbose_name
 
 class Property(models.Model):
-	pmsg		= models.ForeignKey(Pmsg)
+	pmsg		= models.ForeignKey(Pmsg, on_delete=models.PROTECT)
 	argkey		= models.CharField("key", max_length = 40)
 	argvalue	= models.CharField("value", max_length = 200)
 
@@ -70,8 +70,3 @@ class Property(models.Model):
 
 	class Meta:
 		unique_together = ("pmsg", "argkey")
-
-class Tscount(models.Model):
-	url = models.URLField('网址', unique = True)
-	num = models.IntegerField('访问数量', default = 1)
-	updated = models.DateTimeField('最后更新', auto_now = True)

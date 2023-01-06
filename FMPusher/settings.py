@@ -1,8 +1,15 @@
 # Django settings for FMPusher project.
-import os.path
+import os
 
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
+from decouple import config
+from dj_database_url import parse as db_url
+
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+DEBUG = config('FMPUSHER_DEBUG', cast=bool, default=False)
+
+ALLOWED_HOSTS = ['*']
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -11,15 +18,10 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'FMPusher',                      # Or path to database file if using sqlite3.
-        'USER': 'fmpusher',                      # Not used with sqlite3.
-        'PASSWORD': '123456',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-    }
+    'default': config('FMPUSHER_DATABASE_URL', cast=db_url),
 }
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -29,7 +31,7 @@ TIME_ZONE = 'Asia/Shanghai'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'zh-hans'
+LANGUAGE_CODE = config('FMPUSHER_LANGUAGE_CODE', default='zh-hans')
 
 SITE_ID = 1
 
@@ -43,6 +45,8 @@ USE_L10N = True
 
 # If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
@@ -79,51 +83,55 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'ebepuy+%l#syb-^l-yzy8!$uwwmq710c3y3q$u0(73fim!j=02'
+SECRET_KEY = config('FMPUSHER_SECRET_KEY')
 
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
-)
-
-MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
+MIDDLEWARE = [
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    # Uncomment the next line for simple clickjacking protection:
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-)
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
 
 ROOT_URLCONF = 'FMPusher.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'FMPusher.wsgi.application'
 
-TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    os.path.join(os.path.dirname(__file__), '../templates').replace('\\','/'),
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR + '/templates'],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
+    'multi_captcha_admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_admin_bootstrapped',
+    # 'django_admin_bootstrapped',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'main',
-)
+]
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -154,4 +162,12 @@ LOGGING = {
     }
 }
 
-TEST_RUNNER = 'django.test.simple.DjangoTestSuiteRunner'
+MULTI_CAPTCHA_ADMIN = {
+    'engine': 'simple-captcha',
+}
+CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.math_challenge'
+CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_dots',)
+
+if os.name == 'nt':
+    GDAL_LIBRARY_PATH = r"C:\\OSGeo4W64\\bin\\gdal301"
+    GEOS_LIBRARY_PATH = r"C:\\OSGeo4W64\\bin\\geos_c"
